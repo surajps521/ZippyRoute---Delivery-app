@@ -1,0 +1,87 @@
+# Java
+*.class
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+pom.xml.bak
+release.properties
+dependency-reduced-pom.xml
+.flattened-pom.xml
+.m2/
+
+# IDE
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+*.code-workspace
+.DS_Store
+.classpath
+.project
+.settings/
+*.swp
+*.swo
+*~
+.vim/
+
+# Build
+bin/
+build/
+out/
+dist/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Application
+*.log
+logs/
+application-local.properties
+
+# Node (if frontend uses Node)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Frontend
+frontend/dist/
+frontend/build/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Sensitive Information
+.env
+.env.local
+*.key
+*.pem
+secrets/
+
+# Temporary
+*.tmp
+temp/
+cache/
+
+# OS-specific
+.gradle/
+.nb-gradle/
+lint.xml
+
+# Package Files
+*.jar
+!.mvn/wrapper/maven-wrapper.jar

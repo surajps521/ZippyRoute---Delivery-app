@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZippyRoute - Food Delivery</title>
+    <link rel="icon" type="image/png" href="images/logo.png">
+    <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading-screen active">
+        <div class="loader-container">
+            <div class="loader-logo">
+                <img src="images/logo.png" alt="ZippyRoute" class="loader-img">
+            </div>
+            <div class="loader-text">
+                <h1>ZippyRoute</h1>
+                <p>Preparing your delicious experience...</p>
+            </div>
+            <div class="loader-bars">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
+            <div class="loader-status">
+                <span id="loadStatus">Initializing System...</span>
+            </div>
+        </div>
+    </div>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-brand" onclick="goToPage('home')">
+                <img src="images/logo.png" alt="ZippyRoute Logo" class="logo logo-click">
+                <h1 class="brand-text logo-click">ZippyRoute</h1>
+            </div>
+            <ul class="navbar-menu" id="navbarMenu" style="display: none;">
+                <li><a href="#" onclick="goToPage('menu')">Menu</a></li>
+                <li><a href="#" onclick="goToPage('orders')">My Orders</a></li>
+                <li><a href="#" onclick="logout()">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div id="app">
+        <!-- Home Page -->
+        <div id="homePage" class="page active">
+            <div class="hero-section" style="background-image: url('images/food.png');">
+                <div class="hero-overlay"></div>
+                <div class="container hero-content">
+                    <div class="hero-text">
+                        <h1>Welcome to <span class="brand">ZippyRoute</span></h1>
+                        <p class="tagline">Fast, Fresh, and Delivered Hot to Your Door</p>
+                        <button class="btn btn-primary btn-lg" onclick="goToLoginOrMenu()">Order Now</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="features-section">
+                <div class="container">
+                    <h2>Why Choose ZippyRoute?</h2>
+                    <div class="features-grid">
+                        <div class="feature-card">
+                            <div class="feature-icon">⚡</div>
+                            <h3>Super Fast</h3>
+                            <p>30 minutes or less, guaranteed delivery time</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">🌡️</div>
+                            <h3>Always Fresh</h3>
+                            <p>Hot and fresh meals delivered straight to you</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">💰</div>
+                            <h3>Great Prices</h3>
+                            <p>Affordable meals without compromising quality</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">📍</div>
+                            <h3>Live Tracking</h3>
+                            <p>Track your order in real-time on our map</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Auth Page -->
+        <div id="authPage" class="page active">
+            <div class="auth-container">
+                <div class="auth-card">
+                    <h2 id="authTitle">Login</h2>
+                    <form id="authForm">
+                        <div id="registerFields" style="display: none;">
+                            <div class="form-group">
+                                <label>Full Name</label>
+                                <input type="text" id="fullName" placeholder="Your Name" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Phone Number</label>
+                                <input type="tel" id="phoneNumber" placeholder="Phone Number">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="email" placeholder="Enter your email" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" id="password" placeholder="Enter your password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Login</button>
+                    </form>
+                    <p class="auth-toggle">Don't have an account? <a href="#" onclick="toggleAuth()">Register</a></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Menu Page -->
+        <div id="menuPage" class="page">
+            <div class="container">
+                <div class="menu-header">
+                    <h2>Our Menu</h2>
+                    <div class="search-bar">
+                        <input type="text" id="searchInput" placeholder="Search food items...">
+                        <select id="categoryFilter">
+                            <option value="">All Categories</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="menu-grid" id="menuGrid">
+                    <!-- Menu items will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Cart -->
+            <div class="cart-container">
+                <div class="cart">
+                    <h3>🛒 Cart</h3>
+                    <div id="cartItems"></div>
+                    <div class="cart-summary">
+                        <div class="summary-item">
+                            <span>Subtotal:</span>
+                            <span id="subtotal">₹0</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Delivery Fee:</span>
+                            <span>₹50</span>
+                        </div>
+                        <div class="summary-item total">
+                            <span>Total:</span>
+                            <span id="total">₹50</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary btn-block" onclick="goToCheckout()">Proceed to Checkout</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Checkout Page -->
+        <div id="checkoutPage" class="page">
+            <div class="container" style="max-width: 600px;">
+                <h2>Checkout</h2>
+                <form id="checkoutForm">
+                    <div class="form-group">
+                        <label>Delivery Address</label>
+                        <textarea id="deliveryAddress" placeholder="Enter your delivery address" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="tel" id="checkoutPhone" placeholder="Phone number" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Special Instructions (Optional)</label>
+                        <textarea id="specialNotes" placeholder="Any special requests?"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Items Summary</label>
+                        <div id="checkoutSummary"></div>
+                    </div>
+                    <div class="form-group">
+                        <h4>Payment Summary</h4>
+                        <div class="summary-item">
+                            <span>Subtotal:</span>
+                            <span id="checkoutSubtotal">₹0</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Delivery Fee:</span>
+                            <span>₹50</span>
+                        </div>
+                        <div class="summary-item total">
+                            <span>Total:</span>
+                            <span id="checkoutTotal">₹50</span>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Place Order</button>
+                    <button type="button" class="btn btn-secondary btn-block" onclick="goToPage('menu')" style="margin-top: 10px;">Back to Menu</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Orders Page -->
+        <div id="ordersPage" class="page">
+            <div class="container">
+                <h2>My Orders</h2>
+                <div id="ordersList"></div>
+            </div>
+        </div>
+
+        <!-- Order Tracking Page -->
+        <div id="trackingPage" class="page">
+            <div class="container" style="max-width: 600px;">
+                <h2>Order Tracking</h2>
+                <div class="tracking-status">
+                    <div class="status-step" id="step1">
+                        <div class="status-circle">1</div>
+                        <h4>Order Confirmed</h4>
+                        <p id="step1Time"></p>
+                    </div>
+                    <div class="status-step" id="step2">
+                        <div class="status-circle">2</div>
+                        <h4>Preparing</h4>
+                        <p id="step2Time"></p>
+                    </div>
+                    <div class="status-step" id="step3">
+                        <div class="status-circle">3</div>
+                        <h4>On the way</h4>
+                        <p id="step3Location"></p>
+                        <p id="step3Time"></p>
+                    </div>
+                    <div class="status-step" id="step4">
+                        <div class="status-circle">4</div>
+                        <h4>Delivered</h4>
+                        <p id="step4Time"></p>
+                    </div>
+                </div>
+                <div class="tracking-info">
+                    <h4>Delivery Person</h4>
+                    <p id="deliveryPersonInfo"></p>
+                </div>
+                <button class="btn btn-secondary btn-block" onclick="goToPage('orders')" style="margin-top: 20px;">Back to Orders</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 ZippyRoute. Fast food delivery at your doorstep!</p>
+    </footer>
+
+    <script src="js/app.js?v=2.0"></script>
