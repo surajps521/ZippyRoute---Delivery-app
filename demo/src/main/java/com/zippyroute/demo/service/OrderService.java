@@ -2,6 +2,7 @@ package com.zippyroute.demo.service;
 
 import com.zippyroute.demo.dto.CreateOrderRequest;
 import com.zippyroute.demo.dto.OrderDTO;
+import com.zippyroute.demo.dto.OrderEvent;
 import com.zippyroute.demo.entity.*;
 import com.zippyroute.demo.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,9 @@ public class OrderService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private OrderProducerService orderProducerService;
 
     public OrderDTO createOrder(Long userId, CreateOrderRequest request) {
         User user = userRepository.findById(userId).orElse(null);
@@ -69,6 +73,9 @@ public class OrderService {
         tracking.setEstimatedDeliveryTime("30");
         orderTrackingRepository.save(tracking);
 
+        // Publish order created event to Kafka
+        publishOrderEvent(savedOrder, "CREATED");
+
         return convertToDTO(savedOrder);
     }
 
@@ -98,6 +105,9 @@ public class OrderService {
                 orderTrackingRepository.save(tracking);
             }
 
+            // Publish order status updated event to Kafka
+            publishOrderEvent(updated, "STATUS_UPDATED");
+
             return convertToDTO(updated);
         }
         return null;
@@ -106,9 +116,39 @@ public class OrderService {
     public OrderDTO cancelOrder(Long orderId, Long userId) {
         Order order = orderRepository.findByIdAndUserId(orderId, userId).orElse(null);
         if (order != null && (order.getStatus().equals("PENDING") || order.getStatus().equals("CONFIRMED"))) {
-            return updateOrderStatus(orderId, "CANCELLED");
+            order.setStatus("CANCELLED");
+            order.setUpdatedAt(System.currentTimeMillis());
+            Order updated = orderRepository.save(order);
+
+            // Update tracking
+            OrderTracking tracking = orderTrackingRepository.findByOrderId(orderId).orElse(null);
+            if (tracking != null) {
+                tracking.setCurrentStatus("CANCELLED");
+                tracking.setUpdatedAt(System.currentTimeMillis());
+                orderTrackingRepository.save(tracking);
+            }
+
+            // Publish order cancelled event to Kafka
+            publishOrderEvent(updated, "CANCELLED");
+
+            return convertToDTO(updated);
         }
         return null;
+    }
+
+    private void publishOrderEvent(Order order, String eventType) {
+        OrderEvent event = new OrderEvent();
+        event.setOrderId(order.getId());
+        event.setUserId(order.getUser().getId());
+        event.setStatus(order.getStatus());
+        event.setTotalAmount(order.getTotalAmount());
+        event.setDeliveryAddress(order.getDeliveryAddress());
+        event.setPhoneNumber(order.getPhoneNumber());
+        event.setEventType(eventType);
+        event.setTimestamp(System.currentTimeMillis());
+        event.setNotes(order.getNotes());
+
+        orderProducerService.publishOrderEvent(event);
     }
 
     private OrderDTO convertToDTO(Order order) {
